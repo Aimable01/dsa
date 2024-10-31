@@ -13,6 +13,7 @@ int fact(int n){
     int smallAnswer = fact(n - 1);
 
     return n * smallAnswer;
+
 }
 
 // the sum of digits of a number
