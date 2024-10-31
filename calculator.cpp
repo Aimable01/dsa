@@ -1,129 +1,140 @@
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QGridLayout>
-#include <QLabel>
+#include <windows.h>
+#include <string>
 
-class Calculator : public QWidget {
-    Q_OBJECT
+LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
-public:
-    Calculator(QWidget *parent = nullptr);
+// Global Variables
+HWND hwndDisplay;
+std::string input1 = "", input2 = "", operation = "";
+bool isSecondNumber = false;
 
-private slots:
-    void onNumberPressed();
-    void onOperatorPressed();
-    void onEqualPressed();
-    void onClearPressed();
+// Utility function to update display
+void UpdateDisplay(HWND hwnd) {
+    std::string displayText = input1 + operation + input2;
+    SetWindowText(hwndDisplay, displayText.c_str());
+}
 
-private:
-    QLineEdit *display;
-    double firstOperand;
-    QString pendingOperator;
-    bool waitingForSecondOperand;
-};
+// Function to perform the calculation
+void Calculate() {
+    if (input1.empty() || input2.empty() || operation.empty()) return;
+    double num1 = std::stod(input1);
+    double num2 = std::stod(input2);
+    double result = 0.0;
 
-Calculator::Calculator(QWidget *parent)
-    : QWidget(parent), firstOperand(0), waitingForSecondOperand(false) {
-    display = new QLineEdit("0");
-    display->setReadOnly(true);
-    display->setAlignment(Qt::AlignRight);
-
-    QGridLayout *mainLayout = new QGridLayout;
-
-    // Number buttons
-    for (int i = 0; i < 10; ++i) {
-        QPushButton *button = new QPushButton(QString::number(i));
-        connect(button, &QPushButton::clicked, this, &Calculator::onNumberPressed);
-        mainLayout->addWidget(button, i / 3 + 2, i % 3);
+    if (operation == "+") result = num1 + num2;
+    else if (operation == "-") result = num1 - num2;
+    else if (operation == "*") result = num1 * num2;
+    else if (operation == "/") {
+        if (num2 == 0) {
+            MessageBox(NULL, "Error: Division by zero!", "Calculator Error", MB_ICONERROR);
+            input1 = ""; input2 = ""; operation = ""; isSecondNumber = false;
+            UpdateDisplay(hwndDisplay);
+            return;
+        }
+        result = num1 / num2;
     }
 
-    // Operator buttons
-    QString operators[4] = {"+", "-", "*", "/"};
-    for (int i = 0; i < 4; ++i) {
-        QPushButton *button = new QPushButton(operators[i]);
-        connect(button, &QPushButton::clicked, this, &Calculator::onOperatorPressed);
-        mainLayout->addWidget(button, i + 2, 3);
+    input1 = std::to_string(result);
+    input2 = "";
+    operation = "";
+    isSecondNumber = false;
+
+    // Trim trailing zeros for aesthetics
+    size_t dotPos = input1.find('.');
+    if (dotPos != std::string::npos) {
+        input1.erase(input1.find_last_not_of('0') + 1, std::string::npos);
+        if (input1.back() == '.') input1.pop_back();
     }
-
-    // Clear and Equal buttons
-    QPushButton *clearButton = new QPushButton("C");
-    connect(clearButton, &QPushButton::clicked, this, &Calculator::onClearPressed);
-    mainLayout->addWidget(clearButton, 1, 0);
-
-    QPushButton *equalButton = new QPushButton("=");
-    connect(equalButton, &QPushButton::clicked, this, &Calculator::onEqualPressed);
-    mainLayout->addWidget(equalButton, 1, 3);
-
-    mainLayout->addWidget(display, 0, 0, 1, 4);
-
-    setLayout(mainLayout);
 }
 
-void Calculator::onNumberPressed() {
-    QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (!button) return;
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    WNDCLASS wc = {};
+    wc.lpfnWndProc = WindowProcedure;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = "CalculatorClass";
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
-    if (display->text() == "0" || waitingForSecondOperand) {
-        display->clear();
-        waitingForSecondOperand = false;
+    RegisterClass(&wc);
+
+    HWND hwnd = CreateWindowEx(
+        0,
+        "CalculatorClass",
+        "Simple Calculator",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 320, 450,
+        NULL,
+        NULL,
+        hInstance,
+        NULL
+    );
+
+    ShowWindow(hwnd, nCmdShow);
+
+    MSG msg = {};
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
-    display->setText(display->text() + button->text());
+    return 0;
 }
 
-void Calculator::onOperatorPressed() {
-    QPushButton *button = qobject_cast<QPushButton *>(sender());
-    if (!button) return;
+LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    switch (msg) {
+    case WM_CREATE: {
+        hwndDisplay = CreateWindow("STATIC", "", WS_CHILD | WS_VISIBLE | SS_RIGHT, 
+                                   10, 10, 280, 40, hwnd, NULL, NULL, NULL);
 
-    QString operatorSymbol = button->text();
-    double displayValue = display->text().toDouble();
+        // Set positions for buttons with spacing
+        int xPos = 10, yPos = 60;
+        int buttonWidth = 60, buttonHeight = 50;
+        int xSpacing = 20, ySpacing = 15;
 
-    if (!pendingOperator.isEmpty() && !waitingForSecondOperand) {
-        onEqualPressed();
+        // Create number buttons
+        for (int i = 1; i <= 9; ++i) {
+            CreateWindow("BUTTON", std::to_string(i).c_str(), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 
+                         xPos, yPos, buttonWidth, buttonHeight, hwnd, (HMENU)(i), NULL, NULL);
+            xPos += buttonWidth + xSpacing;
+            if (i % 3 == 0) { xPos = 10; yPos += buttonHeight + ySpacing; }
+        }
+        CreateWindow("BUTTON", "0", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 10, yPos, buttonWidth, buttonHeight, hwnd, (HMENU)0, NULL, NULL);
+        CreateWindow("BUTTON", ".", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 90, yPos, buttonWidth, buttonHeight, hwnd, (HMENU)'.', NULL, NULL);
+
+        // Create operation buttons
+        CreateWindow("BUTTON", "+", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 250, 60, buttonWidth, buttonHeight, hwnd, (HMENU)'+', NULL, NULL);
+        CreateWindow("BUTTON", "-", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 250, 125, buttonWidth, buttonHeight, hwnd, (HMENU)'-', NULL, NULL);
+        CreateWindow("BUTTON", "*", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 250, 190, buttonWidth, buttonHeight, hwnd, (HMENU)'*', NULL, NULL);
+        CreateWindow("BUTTON", "/", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 250, 255, buttonWidth, buttonHeight, hwnd, (HMENU)'/', NULL, NULL);
+        CreateWindow("BUTTON", "=", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 10, 320, 280, buttonHeight, hwnd, (HMENU)'=', NULL, NULL);
+        CreateWindow("BUTTON", "C", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 250, 10, buttonWidth, 40, hwnd, (HMENU)'C', NULL, NULL);
+    } break;
+
+    case WM_COMMAND: {
+        int wmId = LOWORD(wParam);
+        if (wmId >= 0 && wmId <= 9) { // Number buttons
+            if (!isSecondNumber) input1 += std::to_string(wmId);
+            else input2 += std::to_string(wmId);
+        } else if (wmId == '+' || wmId == '-' || wmId == '*' || wmId == '/') { // Operation buttons
+            if (!input1.empty() && input2.empty()) {
+                operation = (char)wmId;
+                isSecondNumber = true;
+            }
+        } else if (wmId == '=') { // Equals button
+            Calculate();
+        } else if (wmId == 'C') { // Clear button
+            input1 = ""; input2 = ""; operation = ""; isSecondNumber = false;
+        } else if (wmId == '.') { // Decimal point
+            if (!isSecondNumber && input1.find('.') == std::string::npos) input1 += '.';
+            else if (isSecondNumber && input2.find('.') == std::string::npos) input2 += '.';
+        }
+        UpdateDisplay(hwnd);
+    } break;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        break;
+
+    default:
+        return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-
-    firstOperand = displayValue;
-    pendingOperator = operatorSymbol;
-    waitingForSecondOperand = true;
+    return 0;
 }
-
-void Calculator::onEqualPressed() {
-    double secondOperand = display->text().toDouble();
-    double result = 0;
-
-    if (pendingOperator == "+") {
-        result = firstOperand + secondOperand;
-    } else if (pendingOperator == "-") {
-        result = firstOperand - secondOperand;
-    } else if (pendingOperator == "*") {
-        result = firstOperand * secondOperand;
-    } else if (pendingOperator == "/" && secondOperand != 0) {
-        result = firstOperand / secondOperand;
-    } else {
-        display->setText("Error");
-        return;
-    }
-
-    display->setText(QString::number(result));
-    pendingOperator.clear();
-    waitingForSecondOperand = true;
-}
-
-void Calculator::onClearPressed() {
-    display->setText("0");
-    firstOperand = 0;
-    pendingOperator.clear();
-    waitingForSecondOperand = false;
-}
-
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    Calculator calculator;
-    calculator.setWindowTitle("Calculator");
-    calculator.resize(250, 200);
-    calculator.show();
-    return app.exec();
-}
-
-#include "main.moc"
