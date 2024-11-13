@@ -8,7 +8,6 @@ int main(){
     for (int i = 0; i < 5; i++){
         cout << *(numbers + i) << endl;
     }
-    ddlle;
 
     return 0;
 }
