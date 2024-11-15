@@ -19,7 +19,7 @@
      <rect>
       <x>100</x>
       <y>20</y>
-      <width>131</width>
+      <width>161</width>
       <height>20</height>
      </rect>
     </property>
@@ -186,10 +186,10 @@
    <widget class="QPushButton" name="multBtn">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>190</x>
       <y>140</y>
-      <width>21</width>
-      <height>18</height>
+      <width>41</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -201,8 +201,8 @@
      <rect>
       <x>130</x>
       <y>140</y>
-      <width>21</width>
-      <height>18</height>
+      <width>51</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -212,10 +212,10 @@
    <widget class="QPushButton" name="eqBtn">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>140</y>
-      <width>41</width>
-      <height>20</height>
+      <x>240</x>
+      <y>79</y>
+      <width>21</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="text">
@@ -227,12 +227,12 @@
      <rect>
       <x>190</x>
       <y>50</y>
-      <width>41</width>
+      <width>71</width>
       <height>18</height>
      </rect>
     </property>
     <property name="text">
-     <string>DEL</string>
+     <string>C</string>
     </property>
    </widget>
   </widget>
