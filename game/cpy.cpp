@@ -15,6 +15,13 @@ int getChoice() {
     cout << "5 - names of films" << endl;
     cout << "Enter the number corresponding to your desired category: ";
     cin >> choice;
+    
+    while (choice < 1 || choice > 5) {
+        cout << "Invalid category. Please enter a number between 1 and 5: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cin >> choice;
+    }
     return choice;
 }
 
@@ -60,10 +67,20 @@ bool playAgain() {
 
 void playGame() {
     int choice = getChoice();
+    if (choice < 1 || choice > 5) {
+        cout << "Invalid category selected. Game terminated." << endl;
+        return;
+    }
+
+    vector<string> categoryNames = {"names of animals", "names of teams", "names of districts", "names of books", "names of films"};
+    cout << "You have selected the category: " << categoryNames[choice - 1] << endl;
+
     string word = getRandomWord(choice);
     string guessedLetters = "";
     int chances = 7;
     bool won = false;
+
+    cout << "You have " << chances << " chances to guess the word." << endl;
 
     while (chances > 0) {
         displayWord(word, guessedLetters);
@@ -72,10 +89,15 @@ void playGame() {
         if (letter == '\0') return;
 
         if (word.find(letter) != string::npos) {
-            guessedLetters += letter;
+            if (guessedLetters.find(letter) == string::npos) {
+                guessedLetters += letter;
+            } else {
+                cout << "You've already guessed that letter." << endl;
+            }
         } else {
             chances--;
             cout << "Incorrect guess. " << chances << " chances left." << endl;
+            cout << "The letter '" << letter << "' is not in the word." << endl;
         }
 
         bool allGuessed = true;
@@ -95,6 +117,8 @@ void playGame() {
 
     if (!won) {
         cout << "Sorry, you've run out of chances. The word was: " << word << endl;
+        cout << "Restarting the game..." << endl;
+        playGame(); // Restart the game
     }
 }
 
