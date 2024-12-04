@@ -31,5 +31,29 @@ int main(){
     cout << "Octal: " << oct << value << endl;
     cout << "Hexadecimal: " << hex << value << endl;
 
+    cout << "----------------------------------------------------" << endl;
+
+    // 4. maths operators
+    cout << "Power: " << pow(2, 3) << endl;
+    cout << "Hypotenuse: " << sqrt(pow(2, 3) + pow(3, 2)) << endl;
+
+    cout << "----------------------------------------------------" << endl;
+
+    // print all pairs that satisfy pythagoras' theorem
+    int count = 0;
+
+    for (int a = 2; a < 100; ++a) {
+        for (int b = a; b < 100; ++b) {
+            double c = std::sqrt(a * a + b * b);
+            if (c == static_cast<int>(c)) {
+                std::cout << "(" << a << ", " << b << ")\n";
+                ++count;
+            }
+        }
+    }
+
+    std::cout << "Total number of pairs: " << count << std::endl;
+
+
     return 0;
 }
