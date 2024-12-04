@@ -1,4 +1,5 @@
 #include <iostream>
+#include<array>
 using namespace std;
 
 void mergeArrays(int x[], int y[], int a[], int s, int e) {
@@ -62,6 +63,10 @@ void mergeSort(int a[], int s, int e) {
 
 int main() {
     int a[] = {7, 3, 10, 5, 6, 2, -5}; // Fixed array initialization
+
+    int size = end(a) - begin(a);
+    cout << size << endl;
+
     mergeSort(a, 0, 6); // Sorting the array
 
     // Output the sorted array
