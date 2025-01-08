@@ -13,9 +13,10 @@ void display(Node *head)
     while (head != NULL)
     {
         cout << head->data << "->";
+        head = head->next;
     }
-    cout << "NULL";
-}
+    cout << "NULL" << endl;
+};
 
 int main()
 {
@@ -28,7 +29,7 @@ int main()
     n2->data = 20;
     n2->next = n3;
     n3->data = 30;
-    n1->next = NULL;
+    n3->next = NULL;
 
     display(n1);
 
