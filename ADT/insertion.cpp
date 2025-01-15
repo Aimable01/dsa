@@ -34,6 +34,39 @@ Node *addAtHead(Node *head, int data)
     return head;
 }
 
+Node *addAtTail(Node *head, int data)
+{
+    Node *temp = head;
+    Node *newNode = new Node(data);
+
+    if (head == NULL)
+    {
+        head = newNode;
+        return head;
+    }
+
+    while (head->next != NULL)
+    {
+        head = head->next;
+    }
+
+    head->next = newNode;
+    return temp;
+}
+
+Node *userData()
+{
+    int data;
+    cout << "Add a number to LL or -1 to exit" << endl;
+    cin >> data;
+
+    Node *head = NULL;
+    while (data != -1)
+    {
+        Node *n = new Node(data);
+    }
+}
+
 int main()
 {
     Node *n1 = new Node();
@@ -56,6 +89,11 @@ int main()
     // -- adding node at the beginning
     cout << "Adding at the beginning" << endl;
     Node *head = addAtHead(n1, 100);
+    display(head);
+
+    // -- adding node at the tail
+    cout << "Adding at the beginning" << endl;
+    head = addAtTail(head, 150);
     display(head);
 
     return 0;
