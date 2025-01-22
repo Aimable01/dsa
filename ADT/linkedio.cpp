@@ -36,6 +36,33 @@ Node *deleteAtHead(Node *head)
     return head;
 }
 
+Node *deleteAtTail(Node *head)
+{
+    Node *temp = head;
+    Node *secondLast = head;
+
+    if (head == NULL)
+    {
+        return NULL;
+    }
+
+    if (head->next == NULL)
+    {
+        delete head;
+        return NULL;
+    }
+
+    while (secondLast->next->next != NULL)
+    {
+        secondLast = secondLast->next;
+    }
+
+    delete (secondLast->next);
+    secondLast->next = NULL;
+
+    return temp;
+}
+
 int main()
 {
     Node *n1 = new Node(17);
@@ -53,10 +80,13 @@ int main()
     cout << "The full list" << endl;
     display(n1);
 
-    cout << "After deleting" << endl;
+    /**cout << "After deleting head" << endl;
     Node *test = deleteAtHead(n1);
+    display(test);**/
 
-    display(test);
+    cout << "After deleting tail" << endl;
+    Node *test1 = deleteAtTail(n1);
+    display(test1);
 
     return 0;
 }
