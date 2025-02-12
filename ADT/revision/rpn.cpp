@@ -1,43 +1,16 @@
 #include <iostream>
 using namespace std;
 
-template <typename T>
-class Node
+int main()
 {
-    T data;
-    Node<T> *next;
+    float PI = 3.14;
+    float *PIptr;
+    float r = 5, A;
+    float x;
+    PIptr = &PI; // ptr to pi
+    x = *PIptr;  // x is now pi (3.14)
+    A = r * r * x;
+    cout << "The area of the cirlce is " << A << endl;
 
-public:
-    Node(T data)
-    {
-        this->data = data;
-        next = NULL;
-    }
-};
-
-template <typename T>
-class Stack
-{
-    Node<T> *head;
-    int size;
-
-public:
-    Stack()
-    {
-        head = NULL;
-        size = 0;
-    }
-
-    bool isEmpty()
-    {
-        return size == 0;
-    }
-
-    void push(T ele)
-    {
-        Node<T> *newNode = new Node<T>(ele);
-        newNode->next = head;
-        head = newNode;
-        size++;
-    }
-};
+    return 0;
+}
