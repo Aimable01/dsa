@@ -52,6 +52,26 @@ void insertAtTail(Node **head, int val)
     temp->next = newNode;
 }
 
+// Function to insert at any position
+void insertAtAny(Node **head, int val, int position)
+{
+    if (position < 1)
+    {
+        cout << "Invalid position" << endl;
+        return;
+    }
+    if (position == 1)
+    {
+        insertAtHead(head, val);
+        return;
+    }
+
+    Node *newNode = new Node(val);
+
+    Node *temp = *head;
+    for ()
+}
+
 int main()
 {
     Node *n1 = new Node(10);
