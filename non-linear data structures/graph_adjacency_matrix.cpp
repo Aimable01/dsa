@@ -10,40 +10,42 @@ private:
 public:
     AdjacencyMatrix(int n)
     {
-        /**
-         * Initializing the adjacency matrix
-         */
         this->n = n;
         adj = new int *[n];
-
         for (int i = 0; i < n; i++)
         {
             adj[i] = new int[n];
             for (int j = 0; j < n; j++)
             {
-                adj[i][j] = 0;
+                adj[i][j] = 0; // Initialize with 0
             }
         }
-
-        display();
     }
 
-    /* Adding edge to the graph */
+    ~AdjacencyMatrix()
+    {
+        for (int i = 0; i < n; i++)
+        {
+            delete[] adj[i];
+        }
+        delete[] adj;
+    }
+
+    /* Adding an edge to the graph */
     void addEdge(int origin, int destin)
     {
-        if (origin > n || destin > n || origin <= 0 || destin <= 0)
+        if (origin < 1 || destin < 1 || origin > n || destin > n)
         {
-            cout << "Invalid edge!\n"
-                 << endl;
+            cout << "Invalid edge!\n";
             return;
         }
         adj[origin - 1][destin - 1] = 1;
     }
 
-    /* Delete an edge from the graph */
-    void delete_edge(int origin, int destin)
+    /* Deleting an edge from the graph */
+    void deleteEdge(int origin, int destin)
     {
-        if (origin > n || destin > n || origin <= 0 || destin <= 0)
+        if (origin < 1 || destin < 1 || origin > n || destin > n)
         {
             cout << "Invalid edge!\n";
             return;
@@ -51,17 +53,17 @@ public:
         adj[origin - 1][destin - 1] = 0;
     }
 
-    /* Print the graph */
+    /* Printing the adjacency matrix */
     void display()
     {
-        int i, j;
-        for (i = 0; i < n; i++)
+        cout << "Adjacency Matrix:\n";
+        for (int i = 0; i < n; i++)
         {
-            for (j = 0; j < n; j++)
+            for (int j = 0; j < n; j++)
             {
                 cout << adj[i][j] << " ";
-                cout << endl;
             }
+            cout << endl; // Fix newline issue
         }
     }
 };
@@ -74,14 +76,14 @@ int main()
     cin >> nodes;
 
     AdjacencyMatrix am(nodes);
-    max_edges = nodes * nodes;
+    max_edges = nodes * (nodes - 1); // Adjusted for directed graph
 
     for (int i = 0; i < max_edges; i++)
     {
         cout << "Edges number: " << i + 1 << endl;
-        cout << "Enter edge(-1 -1 to exit): " << endl;
-        cout << "Enter origin and destination vertices: " << endl;
+        cout << "Enter edge (-1 -1 to exit): ";
         cin >> origin >> destin;
+
         if (origin == -1 || destin == -1)
             break;
 
