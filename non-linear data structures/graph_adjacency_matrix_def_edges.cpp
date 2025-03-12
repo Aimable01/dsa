@@ -33,23 +33,25 @@ public:
     {
         if (origin > n || destin > n || origin <= 0 || destin <= 0)
         {
-            cout << "Invalid edge!\n";
+            cout << "Invalid edge! Vertices must be between 1 and " << n << endl;
             return;
         }
         adj[origin - 1][destin - 1] = 1;
+        cout << "Edge added successfully from vertex " << origin << " to vertex " << destin << endl;
+    }
+
+    void delete_edge(int origin, int destin)
+    {
+        if (origin > n || destin > n || origin <= 0 || destin <= 0)
+        {
+            cout << "Invalid edge! Vertices must be between 1 and " << n << endl;
+            return;
+        }
+        adj[origin - 1][destin - 1] = 0;
+        cout << "Edge deleted successfully from vertex " << origin << " to vertex " << destin << endl;
     }
 
     /* Print the graph */
-    void delete_edge(int origin, int destination)
-    {
-        if (origin > n || destination > n || origin <= 0 || destination <= 0)
-        {
-            cout << "Invalid edge!\n";
-            return;
-        }
-        adj[origin - 1][destination - 1] = 0;
-    }
-
     void display()
     {
         int i, j;
@@ -58,44 +60,54 @@ public:
             for (j = 0; j < n; j++)
             {
                 cout << adj[i][j] << " ";
-                cout << endl;
             }
+            cout << endl;
         }
     }
 };
 
 int main()
 {
-    int nodes, max_edges, edges, origin, destin;
+    int nodes, edges, origin, destin;
 
-    cout << "Enter number of nodes: ";
+    cout << "Enter number of nodes (must be positive): ";
     cin >> nodes;
-    cout << "Enter number of edges: ";
-    cin >> edges;
-    if (edges > (nodes * nodes))
+
+    if (nodes <= 0)
     {
-        cout << "Invalid number of edges" << endl;
-        return 0;
+        cout << "Number of nodes must be positive!" << endl;
+        return 1;
+    }
+
+    cout << "Enter number of edges (must not exceed " << nodes * nodes << "): ";
+    cin >> edges;
+
+    if (edges <= 0 || edges > (nodes * nodes))
+    {
+        cout << "Invalid number of edges! Must be between 1 and " << nodes * nodes << endl;
+        return 1;
     }
 
     AdjacencyMatrix am(nodes);
+    cout << "\nInitial adjacency matrix:" << endl;
+    am.display();
+
     for (int i = 0; i < edges; i++)
     {
-        cout << "Edges number: " << i + 1 << endl;
-        cout << "Enter edge(-1 -1 to exit): " << endl;
-        cout << "Enter origin and destination vertices: " << endl;
+        cout << "\nEdge " << i + 1 << " of " << edges << endl;
+        cout << "Enter origin and destination vertices (1 to " << nodes << ", or -1 -1 to exit): ";
         cin >> origin >> destin;
-        if (origin == 0 || destin == -1)
+
+        if (origin == -1 && destin == -1)
+        {
+            cout << "Exiting edge input..." << endl;
             break;
+        }
 
         am.add_edge(origin, destin);
     }
 
-    am.display();
-
-    am.delete_edge(1, 2);
-    am.delete_edge(2, 2);
-    cout << "After deleting two edges" << endl;
+    cout << "\nFinal adjacency matrix:" << endl;
     am.display();
 
     return 0;
