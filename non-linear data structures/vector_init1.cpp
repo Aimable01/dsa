@@ -23,21 +23,21 @@ int main()
     vector<int> vector3(5, 12);
 
     cout << "Vector from method 1 = ";
-    for (int i = 0; i < vector1.size(); i++)
+    for (int i : vector1)
     {
-        cout << vector1[i] << " ";
+        cout << i << " ";
     }
 
     cout << "\nVector from method 2 = ";
-    for (int i = 0; i < vector2.size(); i++)
+    for (int i : vector2)
     {
-        cout << vector2[i] << " ";
+        cout << i << " ";
     }
 
     cout << "\nVector from method 3 = ";
-    for (int i = 0; i < vector3.size(); i++)
+    for (int i : vector3)
     {
-        cout << vector3[i] << " ";
+        cout << i << " ";
     }
 
     return 0;
