@@ -1,77 +1,85 @@
 #include <iostream>
-#include<array>
 using namespace std;
 
-void mergeArrays(int x[], int y[], int a[], int s, int e) {
-    int mid = (s + e) / 2;
-    int i = s;         // Starting index for left subarray
-    int j = mid + 1;   // Starting index for right subarray
-    int k = s;         // Starting index for merged array
+void merge(int arr[], int start, int mid, int end)
+{
+    int leftSize = mid - start + 1;
+    int rightSize = end - mid;
 
-    while (i <= mid && j <= e) {
-        // Compare and merge elements
-        if (x[i] < y[j]) {
-            a[k] = x[i];
+    // create temporary arrays
+    int left[leftSize], right[rightSize];
+
+    // copy elements into them arrays
+    for (int i = 0; i < leftSize; i++)
+    {
+        left[i] = arr[start + i];
+    }
+
+    for (int j = 0; j < rightSize; j++)
+    {
+        right[j] = arr[mid + 1 + j];
+    }
+
+    // merge the two arrays
+    int i = 0,
+        j = 0,
+        k = start;
+    while (i < leftSize && j < rightSize)
+    {
+        if (left[i] <= right[j])
+        {
+            arr[k] = left[i];
             i++;
-        } else {
-            a[k] = y[j];
+        }
+        else
+        {
+            arr[k] = right[j];
             j++;
         }
         k++;
     }
 
-    // Copy remaining elements from the left subarray
-    while (i <= mid) {
-        a[k] = x[i];
-        k++;
+    // copy the remaining elements
+    while (i < leftSize)
+    {
+        arr[k] = left[i];
         i++;
-    }
-
-    // Copy remaining elements from the right subarray
-    while (j <= e) {
-        a[k] = y[j];
         k++;
+    }
+
+    while (j < rightSize)
+    {
+        arr[k] = right[j];
         j++;
+        k++;
     }
 }
 
-void mergeSort(int a[], int s, int e) {
-    if (s >= e) {
-        return; // Base case: array has one or zero elements
+void mergeSort(int arr[], int start, int end)
+{
+    if (start >= end)
+    {
+        return;
     }
 
-    int mid = (s + e) / 2;
-    int x[100], y[100]; // Temporary arrays for left and right halves
+    int mid = start + (start + end) / 2;
 
-    // Copy elements to the left subarray
-    for (int i = s; i <= mid; i++) {
-        x[i] = a[i];
-    }
+    mergeSort(arr, start, mid);
+    mergeSort(arr, mid + 1, end);
 
-    // Copy elements to the right subarray
-    for (int i = mid + 1; i <= e; i++) {
-        y[i] = a[i];
-    }
-
-    // Recursively sort the left and right subarrays
-    mergeSort(x, s, mid);
-    mergeSort(y, mid + 1, e);
-
-    // Merge the two sorted halves
-    mergeArrays(x, y, a, s, e);
+    merge(arr, start, mid, end);
 }
 
-int main() {
-    int a[] = {7, 3, 10, 5, 6, 2, -5}; // Fixed array initialization
+int main()
+{
+    int arr[5] = {23, 5, 11, 7, 13};
 
-    int size = end(a) - begin(a);
-    cout << size << endl;
-
-    mergeSort(a, 0, 6); // Sorting the array
+    mergeSort(arr, 0, 4);
 
     // Output the sorted array
-    for (int i = 0; i < 7; i++) {
-        cout << a[i] << " ";
+    for (int i = 0; i < 5; i++)
+    {
+        cout << arr[i] << " ";
     }
 
     return 0;
