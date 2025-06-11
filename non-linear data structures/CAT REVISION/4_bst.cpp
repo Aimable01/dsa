@@ -72,7 +72,7 @@ private:
         }
         else
         {
-            // node with only one childe or no child
+            // node with only one child or no child
             if (node->left == nullptr)
             {
                 Node *temp = node->right;
