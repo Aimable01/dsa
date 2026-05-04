@@ -54,6 +54,44 @@ Node *addAtTail(Node *head, int data)
     return temp;
 }
 
+Node *insertAtPosition(Node *head, int data, int pos)
+{
+    Node *newNode = new Node(data);
+
+    // Case 1: insert at head
+    if (pos == 0)
+    {
+        newNode->next = head;
+        return newNode;
+    }
+
+    Node *temp = head;
+
+    // Traverse to (pos - 1)
+    for (int i = 0; i < pos - 1; i++)
+    {
+        if (temp == NULL)
+        {
+            cout << "Position out of bounds" << endl;
+            return head;
+        }
+        temp = temp->next;
+    }
+
+    // If temp is NULL, position is invalid
+    if (temp == NULL)
+    {
+        cout << "Position out of bounds" << endl;
+        return head;
+    }
+
+    // Insert node
+    newNode->next = temp->next;
+    temp->next = newNode;
+
+    return head;
+}
+
 Node *userData()
 {
     int data;
