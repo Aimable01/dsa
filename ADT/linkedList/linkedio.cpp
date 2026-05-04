@@ -31,7 +31,7 @@ Node *deleteAtHead(Node *head)
     }
 
     Node *temp = head;
-    head = head->next;
+    head = temp->next;
     delete temp;
     return head;
 }
